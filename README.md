@@ -32,7 +32,7 @@ The goal: let you interact with vSphere and other VMware products using Python s
 **Clone and install locally**
 
 ```bash
-git clone https://github.com/yourusername/powerpy.git
+git clone https://github.com/tylersgit/powerpy.git
 cd powerpy
 pip install -e .
 ```
