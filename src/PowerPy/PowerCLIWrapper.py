@@ -1,4 +1,8 @@
 import clr
+
+clr.AddReference("/opt/microsoft/powershell/System.Management.Automation.dll")
+clr.AddReference("/opt/microsoft/powershell/Microsoft.Management.Infrastructure.dll")
+
 from System.Management.Automation import PowerShell
 
 

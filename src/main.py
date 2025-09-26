@@ -1,4 +1,4 @@
-from PowerPy import PowerCLIWrapper
+from PowerPy.PowerCLIWrapper import PowerCLIWrapper
 
 cli = PowerCLIWrapper()
 
