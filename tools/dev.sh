@@ -28,7 +28,7 @@ rebuild() {
     fi
 
     echo "Starting new container..."
-    docker run --name "$CONTAINER" \
+    docker run --rm --name "$CONTAINER" \
         -v "$(pwd):/app" \
         -w /app/src \
         "$IMAGE"
