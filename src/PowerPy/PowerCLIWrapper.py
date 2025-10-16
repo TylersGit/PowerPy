@@ -1,6 +1,8 @@
 import logging
 import clr
 
+from PowerPy.helpers import psobject_to_python
+
 logger = logging.getLogger("PowerPy.PowerCLIWrapper")
 
 dlls = ["System.Management.Automation.dll", "Microsoft.Management.Infrastructure.dll"]
@@ -13,7 +15,7 @@ for dll in dlls:
         raise
         
 
-from System.Management.Automation import PowerShell
+from System.Management.Automation import PowerShell, CmdletInvocationException
 
 
 class PowerCLIWrapper:
@@ -22,7 +24,7 @@ class PowerCLIWrapper:
         self.ps = PowerShell.Create()
         logger.debug("PowerShell instance created.")
         logger.debug("Importing VMware PowerCLI module.")
-        self.ps.AddCommand("Import-Module").AddArgument("VMware.PowerCLI").AddParameter("-Force").Invoke()
+        # self.ps.AddCommand("Import-Module").AddArgument("VMware.PowerCLI").AddParameter("-Force").Invoke()
         logger.debug("VMware PowerCLI module imported.")
         self.ps.Commands.Clear()
 
@@ -33,16 +35,22 @@ class PowerCLIWrapper:
             self.ps.AddArgument(arg)
         for k, v in kwargs.items():
             self.ps.AddParameter(k, v)
-        results = self.ps.Invoke()
+        
+        
+        try:
+            results = self.ps.Invoke()
+        except CmdletInvocationException as e:
+            logger.error(f"Command failed: {e.Message}")
+            self.ps.Commands.Clear()
+            return None
         self.ps.Commands.Clear()
         return results
 
 
     # Example cmdlet wrappers
     def Connect_VIServer(self, server, user, password):
-        return self._run("Connect-VIServer", Server=server, User=user, Password=password)
+        return self._run("Connect-VIServer", Server=server, User=user, Password=password, WarningAction="SilentlyContinue", Force=True)
 
-    def Get_VM(self, name=None):
-        if name:
-            return self._run("Get-VM", Name=name)
-        return self._run("Get-VM")
+    def Get_VM(self, *args, **kwargs):
+        result = self._run("Get-VM", *args, **kwargs)
+        return [psobject_to_python(obj) for obj in result]
