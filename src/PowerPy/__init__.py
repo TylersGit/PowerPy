@@ -1,5 +1,6 @@
 # PowerPy/__init__.py
 import logging
+import clr
 
 # Top-level logger for the library
 logger = logging.getLogger("PowerPy")
@@ -26,3 +27,13 @@ def enable_logging(level=logging.INFO):
 enable_logging(logging.DEBUG)
 
 logger.debug("PowerPy initialized")
+
+dlls = ["System.Management.Automation.dll", "Microsoft.Management.Infrastructure.dll"]
+for dll in dlls:
+    try:
+        clr.AddReference(f"/opt/microsoft/powershell/{dll}")
+        logger.debug(f"Loaded {dll} successfully.")
+    except:
+        logger.error(f"Failed to load {dll}. Ensure PowerShell is installed.")
+        raise
+        

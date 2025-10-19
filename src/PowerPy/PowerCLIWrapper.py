@@ -1,19 +1,8 @@
 import logging
-import clr
-
 from PowerPy.helpers import psobject_to_python
 
 logger = logging.getLogger("PowerPy.PowerCLIWrapper")
 
-dlls = ["System.Management.Automation.dll", "Microsoft.Management.Infrastructure.dll"]
-for dll in dlls:
-    try:
-        clr.AddReference(f"/opt/microsoft/powershell/{dll}")
-        logger.debug(f"Loaded {dll} successfully.")
-    except:
-        logger.error(f"Failed to load {dll}. Ensure PowerShell is installed.")
-        raise
-        
 
 from System.Management.Automation import PowerShell, CmdletInvocationException
 
