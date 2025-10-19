@@ -27,6 +27,7 @@ class PowerCLIWrapper:
         # self.ps.AddCommand("Import-Module").AddArgument("VMware.PowerCLI").AddParameter("-Force").Invoke()
         logger.debug("VMware PowerCLI module imported.")
         self.ps.Commands.Clear()
+        self._generate_cmdlets()
 
     def _run(self, cmd, *args, **kwargs):
         # Always clear previous commands
@@ -56,11 +57,16 @@ class PowerCLIWrapper:
             return pythonized_results[0]
         return pythonized_results
 
+    def _create_cmdlet_wrapper(self, cmdlet_name):
+        def wrapper(*args, **kwargs):
+            return self._run(cmdlet_name, *args, **kwargs)
+        return wrapper
 
-    # Example cmdlet wrappers
-    def Connect_VIServer(self, server, user, password):
-        return self._run("Connect-VIServer", Server=server, User=user, Password=password, WarningAction="SilentlyContinue", Force=True)
-
-    def Get_VM(self, *args, **kwargs):
-        result = self._run("Get-VM", *args, **kwargs)
-        return result
+    def _generate_cmdlets(self):
+        cmds = self._run("Get-Command", Module="VMware*")
+        for cmd in cmds:
+            cmd_py_name = cmd.Name
+            cmd_py_name = cmd_py_name.replace("-", "_")
+            logger.debug(f"Creating wrapper for cmdlet: {cmd.Name} as method: {cmd_py_name}")
+            setattr(self, cmd_py_name, self._create_cmdlet_wrapper(cmd.Name))
+            
