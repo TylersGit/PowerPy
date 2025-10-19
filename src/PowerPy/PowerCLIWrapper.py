@@ -29,6 +29,8 @@ class PowerCLIWrapper:
         self.ps.Commands.Clear()
 
     def _run(self, cmd, *args, **kwargs):
+        # Always clear previous commands
+        self.ps.Commands.Clear()
         logger.debug(f"Running command: {cmd} with args: {args} and kwargs: {kwargs}")
         self.ps.AddCommand(cmd)
         for arg in args:
@@ -41,9 +43,7 @@ class PowerCLIWrapper:
             results = self.ps.Invoke()
         except CmdletInvocationException as e:
             logger.error(f"Command failed: {e.Message}")
-            self.ps.Commands.Clear()
             return None
-        self.ps.Commands.Clear()
         return results
 
 
