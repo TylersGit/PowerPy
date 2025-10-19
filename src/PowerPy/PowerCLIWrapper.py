@@ -44,7 +44,17 @@ class PowerCLIWrapper:
         except CmdletInvocationException as e:
             logger.error(f"Command failed: {e.Message}")
             return None
-        return results
+        
+        if results.Count == 0:
+            logger.debug("No results returned from command. Returning None.")
+            return None
+        
+        pythonized_results = [psobject_to_python(obj) for obj in results]
+        
+        if results.Count == 1:
+            logger.debug("Single result returned from command.")
+            return pythonized_results[0]
+        return pythonized_results
 
 
     # Example cmdlet wrappers
@@ -53,4 +63,4 @@ class PowerCLIWrapper:
 
     def Get_VM(self, *args, **kwargs):
         result = self._run("Get-VM", *args, **kwargs)
-        return [psobject_to_python(obj) for obj in result]
+        return result
