@@ -1,13 +1,13 @@
 import logging
 from PowerPy.helpers import psobject_to_python
 
-logger = logging.getLogger("PowerPy.PowerCLIWrapper")
+logger = logging.getLogger("PowerPy.CLI")
 
 
 from System.Management.Automation import PowerShell, CmdletInvocationException
 
 
-class PowerCLIWrapper:
+class CLI:
     def __init__(self):
         logger.debug("Creating PowerShell instance.")
         self.ps = PowerShell.Create()
