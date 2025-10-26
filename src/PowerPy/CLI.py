@@ -8,7 +8,7 @@ from System.Management.Automation import PowerShell, CmdletInvocationException
 
 
 class CLI:
-    def __init__(self):
+    def __init__(self, module="VMware.Vim*"):
         logger.debug("Creating PowerShell instance.")
         self.ps = PowerShell.Create()
         logger.debug("PowerShell instance created.")
@@ -16,7 +16,7 @@ class CLI:
         # self.ps.AddCommand("Import-Module").AddArgument("VMware.PowerCLI").AddParameter("-Force").Invoke()
         logger.debug("VMware PowerCLI module imported.")
         self.ps.Commands.Clear()
-        self._generate_cmdlets()
+        self._generate_cmdlets(module)
 
     def _run(self, cmd, *args, **kwargs):
         # Always clear previous commands
@@ -51,8 +51,8 @@ class CLI:
             return self._run(cmdlet_name, *args, **kwargs)
         return wrapper
 
-    def _generate_cmdlets(self):
-        cmds = self._run("Get-Command", Module="VMware*")
+    def _generate_cmdlets(self, module):
+        cmds = self._run("Get-Command", Module=module)
         for cmd in cmds:
             cmd_py_name = cmd.Name
             cmd_py_name = cmd_py_name.replace("-", "_")
