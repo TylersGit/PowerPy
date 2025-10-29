@@ -37,11 +37,12 @@ ENV PATH=$DOTNET_ROOT:$PATH
 
 # Install PythonNet 3.0.5
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install pythonnet==3.0.5
+RUN python3 -m pip install pythonnet==3.0.5 pytest requests
 
 ENV PATH=$PATH:/opt/microsoft/powershell
 ENV PS_HOME=/opt/microsoft/powershell
 ENV PYTHONNET_RUNTIME=coreclr
+ENV PYTHONPATH="/app"
 
 RUN pwsh -Command "Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted" \
     && pwsh -Command "Install-Module -Name 'VMware.PowerCLI' -Force"

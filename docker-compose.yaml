@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  vcsim:
+    image: vmware/vcsim
+    container_name: vcsim
+    ports:
+      - "8989:8989"
+    networks:
+      - powerpy_net
+
+  powerpy-tests:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: powerpy-tests
+    environment:
+      - VCSIM_SERVER=vcsim
+      - VCSIM_USER=administrator
+      - VCSIM_PASSWORD=password
+      - PYTHONPATH=/app/src
+    volumes:
+      - .:/app
+    networks:
+      - powerpy_net
+    command: pytest -v --disable-warnings
+
+networks:
+  powerpy_net:
+    driver: bridge
