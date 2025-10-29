@@ -18,7 +18,7 @@ class CLI:
         self.ps.Commands.Clear()
         self._generate_cmdlets(module)
 
-    def _run(self, cmd, *args, **kwargs):
+    def _run(self, cmd, raw=False, *args, **kwargs):
         # Always clear previous commands
         self.ps.Commands.Clear()
         logger.debug(f"Running command: {cmd} with args: {args} and kwargs: {kwargs}")
@@ -39,16 +39,21 @@ class CLI:
             logger.debug("No results returned from command. Returning None.")
             return None
         
+        if raw:
+            logger.debug("Returning raw PowerShell objects.")
+            results = [obj.BaseObject for obj in results]
+            return results
+
         pythonized_results = [psobject_to_python(obj) for obj in results]
-        
+
         if results.Count == 1:
             logger.debug("Single result returned from command.")
             return pythonized_results[0]
         return pythonized_results
 
     def _create_cmdlet_wrapper(self, cmdlet_name):
-        def wrapper(*args, **kwargs):
-            return self._run(cmdlet_name, *args, **kwargs)
+        def wrapper(raw=False, *args, **kwargs):
+            return self._run(cmdlet_name, raw=raw, *args, **kwargs)
         return wrapper
 
     def _generate_cmdlets(self, module):
