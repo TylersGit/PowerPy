@@ -8,6 +8,8 @@ from System.Management.Automation import PowerShell, CmdletInvocationException
 
 
 class CLI:
+    vmware_vim_initialized = False
+    
     def __init__(self, module="VMware.Vim*"):
         logger.debug("Creating PowerShell instance.")
         self.ps = PowerShell.Create()
