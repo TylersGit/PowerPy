@@ -1,19 +1,3 @@
-import os
-import pytest
-from PowerPy.CLI import CLI
-
-@pytest.fixture
-def cli():
-    cli = CLI()
-    cli.Connect_VIServer(server=os.getenv("VCSIM_SERVER", "vcsim"),
-                                user=os.getenv("VCSIM_USER", "administrator"),
-                                password=os.getenv("VCSIM_PASSWORD", "password"),
-                                port=8989,
-                                force=True)
-    yield cli
-    cli.Disconnect_VIServer()
-    
-
 def test_get_vm(cli):
     """Test retrieving VMs and their properties, returning the simpler Python objects."""
     vms = cli.Get_VM()
