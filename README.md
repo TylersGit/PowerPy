@@ -33,9 +33,9 @@ pip install -r requirements.txt
 ## Usage
 
 ```python
-from PowerPy import PowerCLIWrapper
+from PowerPy.CLI import CLI
 
-cli = PowerCLIWrapper()
+cli = CLI()
 cli.Connect_VIServer(server="vcenter.local", user="admin", password="secret")
 
 vms = cli.Get_VM()
@@ -50,10 +50,11 @@ cli.Disconnect_VIServer()
 
 
 ## Roadmap
-
+- Send commands directly to console. 
 - Better REPL support  
 - Publish on PyPI
 - Expanded handling for native PowerShell objects (SecureString, PSCredential, etc.)
+- Remove the dependancy on Docker. 
 
 ---
 
